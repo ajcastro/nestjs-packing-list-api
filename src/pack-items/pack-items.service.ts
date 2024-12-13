@@ -18,8 +18,18 @@ export class PackItemsService {
     });
   }
 
-  async findAll() {
-    return await this.databaseService.packItem.findMany();
+  async findAll(search?: string) {
+    return await this.databaseService.packItem.findMany({
+      where: {
+        name: {
+          contains: search ? search : '',
+          mode: 'insensitive',
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
   }
 
   async findOne(id: number) {

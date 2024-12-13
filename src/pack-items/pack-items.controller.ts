@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { PackItemsService } from './pack-items.service';
 import { CreatePackItemDto } from './dto/create-pack-item.dto';
@@ -22,8 +23,8 @@ export class PackItemsController {
   }
 
   @Get()
-  findAll() {
-    return this.packItemsService.findAll();
+  findAll(@Query('search') search?: string) {
+    return this.packItemsService.findAll(search);
   }
 
   @Get(':id')
