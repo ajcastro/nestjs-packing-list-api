@@ -75,6 +75,8 @@ export class PackItemsService {
       },
     });
 
+    if (!packItem) return;
+
     let exists: boolean = !!packItem;
 
     if (id) {
