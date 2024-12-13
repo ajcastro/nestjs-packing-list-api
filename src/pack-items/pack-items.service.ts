@@ -13,6 +13,8 @@ export class PackItemsService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createPackItemDto: CreatePackItemDto) {
+    await this.validateUniquePackItemName(createPackItemDto.name);
+
     return await this.databaseService.packItem.create({
       data: createPackItemDto,
     });
@@ -46,6 +48,7 @@ export class PackItemsService {
 
   async update(id: number, updatePackItemDto: UpdatePackItemDto) {
     await this.findOne(id);
+    await this.validateUniquePackItemName(updatePackItemDto.name, id);
 
     return this.databaseService.packItem.update({
       where: {
@@ -63,5 +66,26 @@ export class PackItemsService {
         id,
       },
     });
+  }
+
+  async validateUniquePackItemName(name: string, id?: number) {
+    const packItem = await this.databaseService.packItem.findUnique({
+      where: {
+        name,
+      },
+    });
+
+    let exists: boolean = !!packItem;
+
+    if (id) {
+      exists = packItem.id !== id;
+    }
+
+    if (exists) {
+      throw new BadRequestException({
+        status: 'error',
+        message: 'Pack item name already exists.',
+      });
+    }
   }
 }
